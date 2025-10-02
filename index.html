@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Nexus Ledger Risk Calculator</title>
+  <meta name="description" content="Free, open-source risk calculator for Forex and Crypto by Nexus Ledger. Calculate lot size, dollar risk, and risk-to-reward instantly.">
+  <style>
+    :root {
+      --brand: #5271ff;
+      --dark: #0f1221;
+      --light: #f7f9ff;
+      --card: #141a33;
+      --text: #e8ecff;
+      --muted: #9aa5ff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: linear-gradient(180deg, var(--dark) 0%, #0b0d1a 100%);
+      color: var(--text);
+    }
+    header {
+      padding: 24px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      letter-spacing: 0.3px;
+    }
+    .brand .logo {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--brand), #87a0ff);
+      display: grid;
+      place-items: center;
+      color: white;
+      font-size: 18px;
+      box-shadow: 0 10px 25px rgba(82,113,255,0.35);
+    }
+    .brand .title {
+      display: grid;
+      line-height: 1.1;
+    }
+    .brand .title small {
+      color: var(--muted);
+      font-weight: 600;
+    }
+    main {
+      max-width: 1100px;
+      margin: 30px auto 60px;
+      padding: 0 16px;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 24px;
+    }
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+      backdrop-filter: blur(6px);
+    }
+    h1,h2,h3 {
+      margin: 8px 0 12px;
+    }
+    h1 { font-size: 28px; }
+    h2 { font-size: 20px; color: #cfd6ff; }
+    p.muted { color: var(--muted); margin-top: 0; }
+    form .row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    label {
+      font-size: 12px;
+      color: var(--muted);
+      display: block;
+      margin-bottom: 6px;
+      letter-spacing: 0.2px;
+    }
+    input, select {
+      width: 100%;
+      padding: 12px 12px;
+      border-radius: 12px;
+      background: #0c1024;
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--text);
+      outline: none;
+    }
+    input:focus, select:focus {
+      border-color: var(--brand);
+      box-shadow: 0 0 0 3px rgba(82,113,255,0.18);
+    }
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .tab-btn {
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: #0c1024;
+      color: var(--text);
+      cursor: pointer;
+      text-align: center;
+      font-weight: 700;
+      transition: all 0.2s ease;
+    }
+    .tab-btn.active {
+      background: linear-gradient(135deg, var(--brand), #87a0ff);
+      border-color: transparent;
+      color: white;
+      box-shadow: 0 10px 25px rgba(82,113,255,0.35);
+    }
+    .submit {
+      margin-top: 6px;
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--brand), #87a0ff);
+      border: none;
+      color: white;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 10px 25px rgba(82,113,255,0.35);
+      letter-spacing: 0.3px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(82,113,255,0.15);
+      border: 1px solid rgba(82,113,255,0.45);
+      color: #cfd6ff;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.25px;
+    }
+    .grid-2 { display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; }
+    .result {
+      padding: 14px;
+      background: #0c1024;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+    }
+    .errors { margin-top: 10px; }
+    .errors .error {
+      background: #2a1320;
+      border: 1px solid #ff6b8a;
+      color: #ffd7e1;
+      padding: 8px 10px;
+      border-radius: 10px;
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
+    footer {
+      max-width: 1100px;
+      margin: 0 auto 40px;
+      padding: 0 16px;
+      color: #9aa5ff;
+      text-align: center;
+    }
+    .small { font-size: 12px; color: #9aa5ff; }
+  </style>
+  <script>
+    function switchMode(mode) {
+      const form = document.querySelector("#calc-form");
+      form.querySelector('input[name="mode"]').value = mode;
+
+      document.querySelector("#tab-forex").classList.toggle("active", mode === "forex");
+      document.querySelector("#tab-crypto").classList.toggle("active", mode === "crypto");
+
+      document.querySelector("#forex-fields").style.display = (mode === "forex") ? "block" : "none";
+      document.querySelector("#crypto-fields").style.display = (mode === "crypto") ? "block" : "none";
+    }
+    document.addEventListener("DOMContentLoaded", () => {
+      // initialize tabs based on current selection or default forex
+      switchMode(document.querySelector('input[name="mode"]').value || "forex");
+    });
+  </script>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="logo">NL</div>
+      <div class="title">
+        <div>Nexus Ledger</div>
+        <small>Fintech & Trading Innovation</small>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="card">
+      <h1>Risk Calculator</h1>
+      <p class="muted">Forex <span class="badge">Lot Size</span> &nbsp;•&nbsp; Crypto <span class="badge">$ Position</span> — calculate position sizing in seconds with institutional discipline.</p>
+
+      <div class="tabs">
+        <div id="tab-forex" class="tab-btn active" onclick="switchMode('forex')">Forex (Lots)</div>
+        <div id="tab-crypto" class="tab-btn" onclick="switchMode('crypto')">Crypto (USD)</div>
+      </div>
+
+      <form id="calc-form" method="POST">
+        <input type="hidden" name="mode" value="{{ 'forex' if not results or results.mode == 'forex' else 'crypto' }}">
+
+        <div class="row">
+          <div>
+            <label>Account Size (USD)</label>
+            <input type="number" step="0.01" name="account" placeholder="e.g., 10000" required>
+          </div>
+          <div>
+            <label>Risk % per Trade</label>
+            <input type="number" step="0.01" name="risk_pct" placeholder="e.g., 1.0" required>
+          </div>
+        </div>
+
+        <!-- FOREX FIELDS -->
+        <div id="forex-fields">
+          <div class="row">
+            <div>
+              <label>Stop Loss (pips)</label>
+              <input type="number" step="0.01" name="stop_pips" placeholder="e.g., 20">
+            </div>
+            <div>
+              <label>Pip Value (per 1.00 lot)</label>
+              <input type="number" step="0.01" name="pip_value" placeholder="Default $10 for most USD-quoted pairs">
+            </div>
+          </div>
+          <div class="row">
+            <div>
+              <label>Take Profit (pips) — optional</label>
+              <input type="number" step="0.01" name="tp_pips" placeholder="e.g., 40">
+            </div>
+            <div>
+              <label class="small">Tip: For JPY pairs, pip value ≈ $9.13 per 1.00 lot; for non-USD quotes, calculate pip value via broker.</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- CRYPTO FIELDS -->
+        <div id="crypto-fields" style="display:none;">
+          <div class="row">
+            <div>
+              <label>Entry Price</label>
+              <input type="number" step="0.0001" name="entry" placeholder="e.g., 62000">
+            </div>
+            <div>
+              <label>Stop Price</label>
+              <input type="number" step="0.0001" name="stop" placeholder="e.g., 61000">
+            </div>
+          </div>
+          <div class="row">
+            <div>
+              <label>Take Profit (optional)</label>
+              <input type="number" step="0.0001" name="tp_price" placeholder="e.g., 64000">
+            </div>
+            <div>
+              <label class="small">Quantity = Risk $ / |Entry − Stop|. Position $ = Qty × Entry.</label>
+            </div>
+          </div>
+        </div>
+
+        <button class="submit" type="submit">Calculate</button>
+
+        {% if errors and errors|length %}
+        <div class="errors">
+          {% for e in errors %}
+          <div class="error">⚠️ {{ e }}</div>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </form>
+    </section>
+
+    <aside class="card">
+      <h2>Results</h2>
+      {% if results %}
+        {% if results.mode == 'forex' %}
+          <div class="result">
+            <p><strong>Risk Amount:</strong> ${{ '%.2f' % results.risk_amount }}</p>
+            <p><strong>Lot Size (standard):</strong> {{ '%.3f' % results.lot_size }}</p>
+            <div class="grid-2">
+              <div><strong>Mini Lots:</strong> {{ '%.2f' % results.mini_lots }}</div>
+              <div><strong>Micro Lots:</strong> {{ '%.1f' % results.micro_lots }}</div>
+            </div>
+            <p class="small">Formula: Lot = (Account × Risk%) / (SL pips × Pip Value per 1.00 lot)</p>
+            {% if results.rr_note %}<p class="small">{{ results.rr_note }}</p>{% endif %}
+          </div>
+        {% elif results.mode == 'crypto' %}
+          <div class="result">
+            <p><strong>Risk Amount:</strong> ${{ '%.2f' % results.risk_amount }}</p>
+            <p><strong>Quantity:</strong> {{ '%.6f' % results.qty }}</p>
+            <p><strong>Position Value:</strong> ${{ '%.2f' % results.position_value }}</p>
+            <p class="small">Formula: Qty = Risk $ / |Entry − Stop|; Position $ = Qty × Entry</p>
+            {% if results.rr_note %}<p class="small">{{ results.rr_note }}</p>{% endif %}
+          </div>
+        {% endif %}
+      {% else %}
+        <p class="muted">Run a calculation to see your position sizing with risk and R:R metrics. Built by <strong>Nexus Ledger</strong>.</p>
+      {% endif %}
+      <hr style="border-color: rgba(255,255,255,0.08); margin: 14px 0;">
+      <p class="small">Pro tip: Fix your risk % (e.g., 1%) and let the calculator decide size. Discipline compounds.</p>
+    </aside>
+  </main>
+
+  <footer>
+    <div class="small">© {{ brand.name }} — {{ brand.tagline }} • Built for traders. Color theme: <strong style="color:#cfd6ff">#5271ff</strong></div>
+  </footer>
+</body>
+</html>
