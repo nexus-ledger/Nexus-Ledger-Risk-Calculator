@@ -2,6 +2,9 @@
 
 A sleek, open-source **Forex lot size + Crypto dollar position** calculator built with Flask — by Nexus Ledger.
 
+<img width="1198" height="676" alt="github" src="https://github.com/user-attachments/assets/4c13b20c-6171-4651-b1c5-8e16617b91e6" />
+
+
 ## ✨ Features
 - **Forex mode**: Account size + risk% + stop (pips) + pip value → **standard lot size** (with mini/micro equivalents)
 - **Crypto mode**: Account size + risk% + entry + stop → **quantity** and **position value**
